@@ -1,0 +1,6 @@
+/node_modules/
+/public/build/
+/public/global.css
+.vercel
+
+.DS_Store
