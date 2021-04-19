@@ -23,8 +23,8 @@ module.exports = async (req, res) => {
       .then((html) => {
          if ('THIS FLIGHT COULD NOT BE LOCATED IN OUR SYSTEM'.indexOf(html) == -1) {
             // Flight not found
-             res.setHeader('Content-type', 'application/json')
-            res.json({ error : "Flight not found" })
+            res.setHeader('Content-type', 'application/json')
+            res.json({ error: "Flight not found" })
          } else{
            // Flight
            let flight = $('#__next > div.desktop__LayoutWrapper-s43d6t8-0.eOYkkH > section > h1', html).text().replace(' Flight Tracker', '').split(') ')[1]
