@@ -2,7 +2,7 @@
    "routes":[
       {
          "src":"/tracker",
-         "dest":"/api/flight-tracker.js"
+         "dest":"/api/flight-tracker.ts"
       }
    ]
 }
