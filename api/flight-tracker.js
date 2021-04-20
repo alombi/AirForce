@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
          return html.text()
       })
       .then((html) => {
-         if ('THIS FLIGHT COULD NOT BE LOCATED IN OUR SYSTEM'.indexOf(html) == -1) {
+         if (html.includes('THIS FLIGHT COULD NOT BE LOCATED IN OUR SYSTEM')) {
             // Flight not found
             res.setHeader('Content-type', 'application/json')
             res.json({ error: "Flight not found" })
