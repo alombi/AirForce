@@ -83,7 +83,7 @@ a {
 .features #planet {
   color: #419CFF;
 }
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .features {
     align-items: center;
     flex-direction: column;
