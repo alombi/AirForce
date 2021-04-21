@@ -3,7 +3,7 @@
       <ion-icon id="flash" name="flash"></ion-icon>
       <div class="desc">
          <h2>Performant</h2>
-         <p>AirForce is fast and easy to use</p>
+         <p>AirForce is very fast and easy to use</p>
       </div>
    </div>
    <div class="element">

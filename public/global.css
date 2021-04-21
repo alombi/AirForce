@@ -42,7 +42,7 @@ a {
 }
 .navbar #logo {
   justify-content: flex-start;
-  margin-left: 5px;
+  margin-left: 10px;
   display: flex;
   align-items: center;
 }

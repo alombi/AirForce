@@ -7,7 +7,7 @@
 <div class="fake"></div>
 <div class="navbar">
    <a id="logo" href="/">
-      <img src="/assets/logo.png" alt=""> <span>AirForce</span>
+      <img src="/assets/logo.png" alt=""> <span><h3>AirForce</h3></span>
    </a>
    <div id="options">
       <a href={url}>Download</a>
@@ -17,6 +17,6 @@
 <style>
    img{
       height: 40px;
-      margin-right: 5px;
+      margin-right: 7px;
    }
 </style>
