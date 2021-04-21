@@ -1,5 +1,6 @@
 const rp = require('node-fetch');
-//const $ = require('cheerio');
+const $ = require('cheerio');
+const airlines = require('airline-codes');
 
 function formatDate(date: string): Object{
 	var year: string = date.split('-')[0];
@@ -7,6 +8,25 @@ function formatDate(date: string): Object{
 	var day: string = date.split('-')[2];
 	var result = {day:day, month:month, year:year}
 	return result
+}
+
+function checkAirline(airline: string): string {
+	if (airline != undefined) {
+		if (airline.length > 2) {
+			airline = airlines.findWhere({ icao: airline }).get('iata')
+			return airline
+		} else {
+			return airline
+		}
+	} else {
+		return ''
+	}
+}
+
+function quit() {
+	setTimeout((function() {
+		return process.exit(1);
+	}), 100);
 }
 
 module.exports = async (req, res) => {
@@ -17,12 +37,10 @@ module.exports = async (req, res) => {
 	let hour: string = req.query.hour;
 	res.setHeader('Content-type', 'application/json')
 	// Checking parameters
-	if (departureAirport == undefined || arrivalAirport == undefined || airline == undefined || date == undefined || hour == undefined){
+	if (departureAirport == undefined || arrivalAirport == undefined || date == undefined || hour == undefined){
 		var error = { error:"Invalid parameters" }
 		res.json(error)
-		setTimeout((function() {
-			return process.exit(1);
-		}), 100);
+		quit()
 	}
 	// Getting a full list of airports (and ICAO-IATA codes)
 	let airportsRequest = await rp('https://raw.githubusercontent.com/mwgg/Airports/master/airports.json')
@@ -36,9 +54,7 @@ module.exports = async (req, res) => {
 			}else{
 				error = { error:"Invalid parameters" }
 				res.json(error)
-				setTimeout((function() {
-					return process.exit(1);
-				}), 100);
+				quit()
 			}
 		}
 	} else{
@@ -53,9 +69,7 @@ module.exports = async (req, res) => {
 			}else{
 				error = { error: "Invalid parameters" }
 				res.json(error)
-				setTimeout((function() {
-					return process.exit(1);
-				}), 100);
+				quit()
 			}
 		}
 	} else{
@@ -65,6 +79,17 @@ module.exports = async (req, res) => {
 	let day: string = formatDate(date)['day'];
 	let month: string = formatDate(date)['month'];
 	let year: string = formatDate(date)['year'];
+
+	let airlineURL = checkAirline(airline)
+
+	const url = `https://www.flightstats.com/v2/flight-tracker/route/${departureAirport}/${arrivalAirport}/${airline}?year=${year}&month=${month}&date=${day}&hour=${hour}`
+	rp(url)
+		.then((html) => {
+			return html.text()
+		})
+		.then((html) => {
+			
+	})
 
 	res.json(arrivalAirport)
 }
