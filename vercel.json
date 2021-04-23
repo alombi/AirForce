@@ -3,6 +3,10 @@
       {
          "src":"/tracker",
          "dest":"/api/flight-tracker.ts"
+      },
+      {
+         "src":"/finder",
+         "dest":"/api/flight-finder.ts"
       }
    ]
 }
