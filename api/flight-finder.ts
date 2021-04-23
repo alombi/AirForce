@@ -23,12 +23,6 @@ function checkAirline(airline: string): string {
 	}
 }
 
-function quit() {
-	setTimeout((function() {
-		return process.exit(1);
-	}), 100);
-}
-
 module.exports = async (req, res) => {
 	let departureAirport: string = req.query.departureAirport;
 	let arrivalAirport: string = req.query.arrivalAirport;
@@ -36,25 +30,23 @@ module.exports = async (req, res) => {
 	let date: string = req.query.date;
 	let hour: string = req.query.hour;
 	res.setHeader('Content-type', 'application/json')
+	let error = null;
 	// Checking parameters
-	if (departureAirport == undefined || arrivalAirport == undefined || date == undefined || hour == undefined){
-		var error = { error:"Invalid parameters" }
-		res.json(error)
-		quit()
+	if (departureAirport == undefined || arrivalAirport == undefined || date == undefined || hour == undefined) {
+		error = { error:"Invalid parameters" }
 	}
 	// Getting a full list of airports (and ICAO-IATA codes)
 	let airportsRequest = await rp('https://raw.githubusercontent.com/mwgg/Airports/master/airports.json')
 	let airportsList = await airportsRequest.json()
 	// Validating departureAirport
 	if (airportsList[departureAirport.toUpperCase()] == undefined){
-		for (var airport in airportsList){
+		for (var airport in airportsList) {
 			if (airportsList[airport].iata == departureAirport.toUpperCase()){
 				departureAirport = departureAirport.toUpperCase()
+				error = null
 				break;
-			}else{
-				error = { error:"Invalid parameters" }
-				res.json(error)
-				quit()
+			} else {
+				error = { error: "Invalid parameters" }
 			}
 		}
 	} else{
@@ -65,11 +57,10 @@ module.exports = async (req, res) => {
 		for (var airport in airportsList){
 			if (airportsList[airport].iata == arrivalAirport.toUpperCase()){
 				arrivalAirport = arrivalAirport.toUpperCase()
+				error = null
 				break;
 			}else{
 				error = { error: "Invalid parameters" }
-				res.json(error)
-				quit()
 			}
 		}
 	} else{
@@ -82,14 +73,36 @@ module.exports = async (req, res) => {
 
 	let airlineURL = checkAirline(airline)
 
-	const url = `https://www.flightstats.com/v2/flight-tracker/route/${departureAirport}/${arrivalAirport}/${airline}?year=${year}&month=${month}&date=${day}&hour=${hour}`
+	const url = `https://www.flightstats.com/v2/flight-tracker/route/${departureAirport}/${arrivalAirport}/${airlineURL}?year=${year}&month=${month}&date=${day}&hour=${hour}`
+	let result;
 	rp(url)
 		.then((html) => {
 			return html.text()
 		})
 		.then((html) => {
-			
-	})
-
-	res.json(arrivalAirport)
+			let root = $('#__next > div.desktop__LayoutWrapper-s43d6t8-0.eOYkkH > section > div > div.table__TableContainer-s1x7nv9w-5.jfmExz > div.table__Table-s1x7nv9w-6.iiiADv', html)[0].children;
+			root.shift()
+			var flights = [];
+			root.forEach(element => {
+				var flightAirline = element.attribs.href.split('/')[3];
+				var flightCode = element.attribs.href.split('/')[4].split('?')[0];
+				var departure = element.children[0].children[0].children[1].children[0].children[0].data;
+				var arrival = element.children[0].children[0].children[2].children[0].children[0].data;
+				var obj = {
+					airline: flightAirline,
+					flight: flightCode,
+					departure: departure,
+					arrival: arrival
+				}
+				flights.push(obj)
+			});
+			result = flights
+		})
+		.finally(() => {
+			if (error == null) {
+				res.json(result)
+			} else {
+				res.json(error)
+			}
+		})
 }
