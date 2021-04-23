@@ -88,8 +88,10 @@ module.exports = async (req, res) => {
 				var flightCode = element.attribs.href.split('/')[4].split('?')[0];
 				var departure = element.children[0].children[0].children[1].children[0].children[0].data;
 				var arrival = element.children[0].children[0].children[2].children[0].children[0].data;
+				var flightAirlineName = airlines.findWhere({ iata: flightAirline }).get('name');
 				var obj = {
 					airline: flightAirline,
+					airlineName: flightAirlineName,
 					flight: flightCode,
 					departure: departure,
 					arrival: arrival
