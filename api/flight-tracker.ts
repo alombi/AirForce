@@ -115,6 +115,6 @@ module.exports = async (req, res) => {
       })
       .catch((err) => {
          res.setHeader('Content-type', 'application/json')
-         res.json({ error: 'An error occurred' })
+         res.json({ response: 'An error occurred', error:err })
       })
 }
